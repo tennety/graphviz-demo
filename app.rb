@@ -12,10 +12,14 @@ before do
   end
 end
 
+get '/' do
+  haml :index
+end
+
 get '/image' do
   @graph.save File.join(APP_ROOT, 'public/images/demo'), 'png'
 
-  haml :index
+  haml :graph_image
 end
 
 get '/dotx' do
@@ -31,18 +35,26 @@ __END__
 @@ layout
 %html
   %head
-    %script{:type => 'text/javascript', :src => 'public/js/prototype.js'}
-    %script{:type => 'text/javascript', :src => 'public/js/path.js'}
-    %script{:type => 'text/javascript', :src => 'public/js/canviz.js'}
-    %link{:rel => 'stylesheet', :type => 'text/css', :href => 'canviz.css'}
+    %script{:type => 'text/javascript', :src => 'js/prototype.js'}
+    %script{:type => 'text/javascript', :src => 'js/path.js'}
+    %script{:type => 'text/javascript', :src => 'js/canviz.js'}
+    %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/canviz.css'}
   %body
+    %title Graphviz | Graph Gem | Canviz
+    %h1 My Awesome Graph/Canviz Demo
+    %a{:href => '/image'} Load Image
+    %a{:href => '/dotx'} Load Dotx
     = yield
 
 @@ index
-.graph
+
+@@ graph_image
+#graph
   %img{ :src => 'images/demo.png' }
 
 @@ graph
+%script{:type => 'text/javascript', :src => 'js/demo.js'}
 #graph
-  = dotx
+#graph_data{:style => 'display: none;'}
+  != "#{dotx}"
 #debug_output{:style => 'display: none;'}
