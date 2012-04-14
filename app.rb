@@ -4,9 +4,21 @@ require 'graph'
 
 APP_ROOT = File.expand_path(File.dirname(__FILE__))
 
+helpers do
+  def to_dot(graph)
+    str = IO.popen("/usr/bin/dot -Txdot", "w+")
+    str.puts graph.to_s
+    str.close_write
+    str.readlines.join
+  end
+end
+
 before do
-  edges = [["a", "b"], ["a", "c"], ["b", "c"]]
+  edges = [["Nodes and Edges", "Graph"],
+           ["Graph", "Graphviz"],
+           ["Graphviz", "Canviz"]]
   @graph = Graph.new "demo"
+  @graph.boxes
   edges.each do |(n1, n2)|
     @graph.edge n1, n2
   end
@@ -23,11 +35,21 @@ get '/image' do
 end
 
 get '/dotx' do
-  str = IO.popen("/usr/bin/dot -Txdot", "w+")
-  str.puts @graph.to_s
-  str.close_write
+  dotx = to_dot(@graph)
+  haml :graph, :locals => {:dotx => dotx}
+end
 
-  haml :graph, :locals => {:dotx => str.readlines.join}
+get '/dynamic' do
+  haml :dynamic
+end
+
+post '/build' do
+  graph = Graph.new("demo")
+  graph.boxes
+  params["from"].each_with_index do |f, i|
+    graph.edge f, params["to"][i]
+  end
+  to_dot(graph)
 end
 
 __END__
@@ -42,8 +64,10 @@ __END__
   %body
     %title Graphviz | Graph Gem | Canviz
     %h1 My Awesome Graph/Canviz Demo
+    %a{:href => '/'} Home
     %a{:href => '/image'} Load Image
     %a{:href => '/dotx'} Load Dotx
+    %a{:href => '/dynamic'} Build dynamically
     = yield
 
 @@ index
@@ -57,4 +81,19 @@ __END__
 #graph
 #graph_data{:style => 'display: none;'}
   != "#{dotx}"
+#debug_output{:style => 'display: none;'}
+
+@@ dynamic
+%script{:type => 'text/javascript', :src => 'js/dynamic.js'}
+%script#edge_template{:type => 'text/template'}
+  <div class='edge_row'>
+  <input type='text' placeholder='From' name='from[]' />
+  <input type='text' placeholder='To' name='to[]'     />
+  </div>
+%form.graph_builder{:action => '/build', :method => 'post'}
+  .edge_fields
+  .submit
+    %button{:class => 'add_edge'} Add edge
+    %button{:class => 'submit'} Build it!
+#graph
 #debug_output{:style => 'display: none;'}
