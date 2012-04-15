@@ -13,6 +13,7 @@ document.observe('dom:loaded', function() {
     var req = new Ajax.Request(f.readAttribute('action'), {
       parameters: f.serialize(true),
       onSuccess : function(transport){
+        $('graph').innerHTML = '';
         var c = new Canviz('graph');
         c.parse(transport.responseText);
       }

@@ -5,11 +5,15 @@ require 'graph'
 APP_ROOT = File.expand_path(File.dirname(__FILE__))
 
 helpers do
-  def to_dot(graph)
-    str = IO.popen("/usr/bin/dot -Txdot", "w+")
+  def to_dot(graph, method="dot")
+    str = IO.popen("/usr/bin/#{method} -Txdot", "w+")
     str.puts graph.to_s
     str.close_write
     str.readlines.join
+  end
+
+  def graph_methods
+    %w{dot twopi neato circo fdp}
   end
 end
 
@@ -49,7 +53,7 @@ post '/build' do
   params["from"].each_with_index do |f, i|
     graph.edge f, params["to"][i]
   end
-  to_dot(graph)
+  to_dot(graph, params["method"])
 end
 
 __END__
@@ -71,6 +75,8 @@ __END__
     = yield
 
 @@ index
+#graph
+#debug_output{:style => 'display: none;'}
 
 @@ graph_image
 #graph
@@ -93,6 +99,10 @@ __END__
 %form.graph_builder{:action => '/build', :method => 'post'}
   .edge_fields
   .submit
+    %select{:name => 'method'}
+      - graph_methods.map do |m|
+        %option{:value => m}
+          = m
     %button{:class => 'add_edge'} Add edge
     %button{:class => 'submit'} Build it!
 #graph
