@@ -13,7 +13,7 @@ helpers do
   end
 
   def graph_methods
-    %w{dot twopi neato circo fdp}
+    %w{dot twopi neato circo fdp sfdp}
   end
 end
 
@@ -79,7 +79,7 @@ __END__
             %li
               %a{:href => '/dotx'} Load Dotx
             %li
-              %a{:href => '/dynamic'} Build dynamically
+              %a{:href => '/dynamic'} Build Dynamically
     .container
       %section#app
         .page-header
