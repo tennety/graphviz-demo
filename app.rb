@@ -89,8 +89,35 @@ __END__
           #debug_output{:style => 'display: none;'}
 
 @@ index
-.row
-  #graph.span3
+#overview
+  %h2 Overview
+  %ul.unstyled
+    %li
+      Graphs and
+      %a{:href => 'http://graphviz.org'} graphviz
+    %li
+      %ul
+        %li Graphing library
+        %li Graph language
+        %li Can use multiple rendering algorithms
+    %li
+      Graph
+      %a{:href => 'http://github.com/seattlerb/graph'} gem
+    %li
+      %ul
+        %li DSL
+        %li Inline
+        %li Images vs Text output
+    %li
+      %a{:href => 'http://code.google.com/p/canviz'} Canviz
+      %ul
+        %li Uses Prototype
+        %li Parses dotx, renders SVG
+        %li
+          %a{:href => 'http://ryandesign.com/canviz'} Demo site
+          %ul
+            %li Can render from a remote file
+            %li Or parse text on the client side
 
 @@ graph_image
 .row
@@ -121,5 +148,7 @@ __END__
             = m
       %button{:class => 'add_edge btn'} Add edge
       %button{:class => 'submit btn'} Build it!
+    .row
+      &nbsp;
     .edge_fields
   #graph.span5
