@@ -22,7 +22,6 @@ before do
            ["Graph", "Graphviz"],
            ["Graphviz", "Canviz"]]
   @graph = Graph.new "demo"
-  @graph.boxes
   edges.each do |(n1, n2)|
     @graph.edge n1, n2
   end
@@ -49,7 +48,6 @@ end
 
 post '/build' do
   graph = Graph.new("demo")
-  graph.boxes
   params["from"].each_with_index do |f, i|
     graph.edge f, params["to"][i]
   end
@@ -59,35 +57,53 @@ end
 __END__
 
 @@ layout
+!!!5
 %html
   %head
+    %script{:type => 'text/javascript', :src => 'js/bootstrap.min.js'}
     %script{:type => 'text/javascript', :src => 'js/prototype.js'}
     %script{:type => 'text/javascript', :src => 'js/path.js'}
     %script{:type => 'text/javascript', :src => 'js/canviz.js'}
-    %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/canviz.css'}
-  %body
+    %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/bootstrap.css'}
+    %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/bootstrap-responsive.css'}
+  %body{:style => 'padding-top: 40px'}
     %title Graphviz | Graph Gem | Canviz
-    %h1 My Awesome Graph/Canviz Demo
-    %a{:href => '/'} Home
-    %a{:href => '/image'} Load Image
-    %a{:href => '/dotx'} Load Dotx
-    %a{:href => '/dynamic'} Build dynamically
-    = yield
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          %ul.nav
+            %li
+              %a{:href => '/'} Home
+            %li
+              %a{:href => '/image'} Load Image
+            %li
+              %a{:href => '/dotx'} Load Dotx
+            %li
+              %a{:href => '/dynamic'} Build dynamically
+    .container
+      %section#app
+        .page-header
+          %h1 My Awesome Graph/Canviz Demo
+        = yield
+        .row
+          #debug_output{:style => 'display: none;'}
 
 @@ index
-#graph
-#debug_output{:style => 'display: none;'}
+.row
+  #graph.span3
 
 @@ graph_image
-#graph
-  %img{ :src => 'images/demo.png' }
+.row
+  #graph.span3
+    %img{ :src => 'images/demo.png' }
 
 @@ graph
 %script{:type => 'text/javascript', :src => 'js/demo.js'}
-#graph
-#graph_data{:style => 'display: none;'}
-  != "#{dotx}"
-#debug_output{:style => 'display: none;'}
+.row
+  #graph.span3
+.row
+  #graph_data{:style => 'display: none;'}
+    != "#{dotx}"
 
 @@ dynamic
 %script{:type => 'text/javascript', :src => 'js/dynamic.js'}
@@ -96,14 +112,14 @@ __END__
   <input type='text' placeholder='From' name='from[]' />
   <input type='text' placeholder='To' name='to[]'     />
   </div>
-%form.graph_builder{:action => '/build', :method => 'post'}
-  .edge_fields
-  .submit
-    %select{:name => 'method'}
-      - graph_methods.map do |m|
-        %option{:value => m}
-          = m
-    %button{:class => 'add_edge'} Add edge
-    %button{:class => 'submit'} Build it!
-#graph
-#debug_output{:style => 'display: none;'}
+.row
+  %form.span5.graph_builder{:action => '/build', :method => 'post'}
+    .submit.btn-group
+      %select.btn{:name => 'method'}
+        - graph_methods.map do |m|
+          %option{:value => m}
+            = m
+      %button{:class => 'add_edge btn'} Add edge
+      %button{:class => 'submit btn'} Build it!
+    .edge_fields
+  #graph.span5
