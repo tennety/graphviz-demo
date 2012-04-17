@@ -118,6 +118,8 @@ __END__
           %ul
             %li Can render from a remote file
             %li Or parse text on the client side
+.row
+  #graph.span3
 
 @@ graph_image
 .row
